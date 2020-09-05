@@ -6,8 +6,8 @@
 import { App, Stack } from '@aws-cdk/core';
 import { RenderStruct } from '../../../../lib/render-struct';
 import { StorageStruct } from '../../../../lib/storage-struct';
+import { TestingTier } from '../../../../lib/testing-tier';
 import { WorkerStruct } from '../../../../lib/worker-struct';
-import { TestingTier } from '../lib/testing-tier';
 
 const app = new App();
 const env = {
@@ -51,4 +51,5 @@ oss.forEach( os => {
   });
 });
 
-new TestingTier(app, 'RFDKInteg-WF-TestingTier' + integStackTag, {env, integStackTag, structs});
+const testingTier = new TestingTier(app, 'RFDKInteg-WF-TestingTier' + integStackTag, {env, integStackTag});
+testingTier.configureWorkerFleetTest(structs);

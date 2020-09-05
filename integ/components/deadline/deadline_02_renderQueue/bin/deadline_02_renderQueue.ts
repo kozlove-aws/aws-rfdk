@@ -6,7 +6,7 @@
 import { App, Stack } from '@aws-cdk/core';
 import { RenderStruct } from '../../../../lib/render-struct';
 import { StorageStruct } from '../../../../lib/storage-struct';
-import { TestingTier } from '../lib/testing-tier';
+import { TestingTier } from '../../../../lib/testing-tier';
 
 const app = new App();
 const env = {
@@ -40,4 +40,5 @@ const render2 = new RenderStruct(componentTier, 'RenderStructRQ2', {
   protocol: 'https',
 });
 
-new TestingTier(app, 'RFDKInteg-RQ-TestingTier' + integStackTag, {env, integStackTag, structs: [render1, render2] });
+const testingTier = new TestingTier(app, 'RFDKInteg-RQ-TestingTier' + integStackTag, {env, integStackTag});
+testingTier.configureRenderQueueTest([render1, render2]);

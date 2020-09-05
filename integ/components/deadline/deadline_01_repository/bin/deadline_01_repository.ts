@@ -5,7 +5,7 @@
 
 import { App, Stack } from '@aws-cdk/core';
 import { StorageStruct } from '../../../../lib/storage-struct';
-import { TestingTier } from '../lib/testing-tier';
+import { TestingTier } from '../../../../lib/testing-tier';
 
 const app = new App();
 const env = {
@@ -32,4 +32,5 @@ const storage3 = new StorageStruct(componentTier, 'StorageStruct3', {
   useMongoDB: true,
 });
 
-new TestingTier(app, 'RFDKInteg-DL-TestingTier' + integStackTag, { env, integStackTag, structs: [storage1, storage2, storage3] });
+const testingTier = new TestingTier(app, 'RFDKInteg-DL-TestingTier' + integStackTag, { env, integStackTag });
+testingTier.configureRepositoryTest([storage1, storage2, storage3]);
