@@ -32,6 +32,7 @@ import {
   InstanceSize,
   InstanceType,
   IVpc,
+  SecurityGroup,
   SubnetType,
   Vpc,
 } from '@aws-cdk/aws-ec2';
@@ -563,6 +564,27 @@ describe('HealthMonitor', () => {
       Subnets: [
         {'Fn::ImportValue': notMatching(stringLike('*PrivateSubnet*'))},
         {'Fn::ImportValue': notMatching(stringLike('*PrivateSubnet*'))},
+      ],
+    }));
+  });
+
+  test('specifying a security group', () => {
+    // WHEN
+    healthMonitor = new HealthMonitor(hmStack, 'healthMonitor2', {
+      vpc,
+      securityGroup: new SecurityGroup(hmStack, 'LBSecurityGroup', { vpc }),
+    });
+
+    const fleet = new TestMonitorableFleet(wfStack, 'workerFleet', {
+      vpc,
+    });
+    healthMonitor.registerFleet(fleet, {});
+
+    // THEN
+    // Make sure it has the security group
+    expectCDK(hmStack).to(haveResourceLike('AWS::ElasticLoadBalancingV2::LoadBalancer', {
+      SecurityGroups: [
+        {'Fn::GetAtt': arrayWith(stringLike('LBSecurityGroup*'))},
       ],
     }));
   });
